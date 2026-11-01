@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta property="og:title" content="для тебя, котик">
+<meta name="theme-color" content="#2a0d16">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{box-sizing:border-box}img{max-width:100%}</style>
+<title>наши три года</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Rubik:wght@400;500;700&display=swap">
+<style>
+:root{
+--bg:#2a0d16;
+--bg2:#4a1424;
+--paper:#fff4ec;
+--ink:#2a1016;
+--gold:#f3c98b;
+--rose:#ff7a93;
+--muted:#e9c7cf;
+--display:"Marck Script","Segoe Script",cursive;
+--body:"Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;
+color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(120% 80% at 50% 20%,var(--bg2) 0%,var(--bg) 70%);color:var(--paper);font-family:var(--body);overflow:hidden;
+padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+canvas#bgfx,canvas#fx{position:fixed;inset:0;pointer-events:none}
+#bgfx{z-index:0}#fx{z-index:20}
+.screen{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding-block:24px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,9vw,4rem);margin:0;line-height:1.05;text-wrap:balance}
+.sub{color:var(--muted);font-size:1rem;max-width:30ch;line-height:1.45;margin:0}
+.eyebrow{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.btn{font-family:var(--body);font-weight:700;font-size:1.05rem;border:0;border-radius:999px;padding:14px 28px;background:var(--gold);color:var(--ink);cursor:pointer;box-shadow:0 8px 24px -10px rgba(243,201,139,.7);touch-action:manipulation}
+.btn:focus-visible{outline:3px solid var(--paper);outline-offset:3px}
+.btn.ghost{background:none;color:var(--muted);box-shadow:none;font-weight:500;font-size:.9rem;text-decoration:underline;text-underline-offset:3px;padding:8px}
+.clock{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cell{min-width:64px;padding:12px 8px 10px;border-radius:14px;background:rgba(255,244,236,.07);border:1px solid rgba(243,201,139,.25)}
+.cell b{display:block;font-size:clamp(1.7rem,8vw,2.4rem);font-weight:700;font-variant-numeric:tabular-nums;color:var(--paper)}
+.cell span{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lock{width:110px;height:110px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-8px) rotate(-6deg)}40%{transform:translateX(8px) rotate(6deg)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.big{font-size:clamp(4rem,22vw,7rem);font-weight:700;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.since{display:grid;grid-template-columns:repeat(3,auto);gap:6px 16px;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.95rem}
+.since b{color:var(--paper)}
+#story{position:fixed;inset:0;z-index:10;background:#000;padding:0}
+#story .blur{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(30px) brightness(.55);transform:scale(1.1)}
+#story img.main{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#story .bars{position:absolute;left:0;right:0;top:0;display:flex;gap:4px;padding:calc(10px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));z-index:3}
+#story .bar{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+#story .bar i{display:block;height:100%;width:0;background:#fff}
+#story .cap{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:60px max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));background:linear-gradient(transparent,rgba(0,0,0,.65));font-family:var(--display);font-size:clamp(1.8rem,7vw,2.6rem);text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+#story .num{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:max(14px,env(safe-area-inset-left,0px));z-index:3;font-size:.8rem;color:rgba(255,255,255,.8)}
+#story .tap{position:absolute;top:0;bottom:0;width:35%;z-index:2}
+#story .tap.l{left:0}#story .tap.r{right:0;width:65%}
+#story img.main{animation:kb 6s ease-out both}
+@keyframes kb{from{transform:scale(1.06)}to{transform:scale(1)}}
+.letter{background:var(--paper);color:var(--ink);border-radius:16px;padding:22px 22px 18px;max-width:min(420px,100%);text-align:left;font-size:1.02rem;line-height:1.55;box-shadow:0 24px 50px -24px rgba(0,0,0,.7);max-height:62vh;overflow:auto;transform:rotate(-1deg)}
+.letter p{margin:0 0 .7em;white-space:pre-wrap}
+.letter .sign{font-family:var(--display);font-size:1.5rem;color:#a3243f;text-align:right;margin:4px 0 0}
+.caret{display:inline-block;width:2px;height:1.05em;background:var(--ink);vertical-align:-2px;margin-left:1px;animation:caret .8s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.fadein{animation:fadein .8s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bgfx"></canvas>
+<canvas id="fx"></canvas>
+<section class="screen" id="sLock">
+<div class="eyebrow">для тебя, котик</div>
+<svg class="lock" id="lockIcon" viewBox="0 0 100 100" aria-hidden="true">
+<path d="M50 88C22 70 10 55 10 38 10 25 20 16 32 16c8 0 14 4 18 10 4-6 10-10 18-10 12 0 22 9 22 22 0 17-12 32-40 50z" fill="#ff7a93" stroke="#fff4ec" stroke-width="3"/>
+<rect x="37" y="44" width="26" height="20" rx="4" fill="#2a0d16"/>
+<path d="M42 44v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#2a0d16" stroke-width="4"/>
+<circle cx="50" cy="53" r="3" fill="#f3c98b"/>
+</svg>
+<h1>Тут кое-что для тебя</h1>
+<p class="sub">Откроется 7 декабря. Не подглядывай, всё равно не получится</p>
+<div class="clock" aria-live="off">
+<div class="cell"><b id="cD">00</b><span>дней</span></div>
+<div class="cell"><b id="cH">00</b><span>часов</span></div>
+<div class="cell"><b id="cM">00</b><span>минут</span></div>
+<div class="cell"><b id="cS">00</b><span>секунд</span></div>
+</div>
+<p class="sub" id="lockHint" style="min-height:1.4em"></p>
+</section>
+<section class="screen" id="sOpen" hidden>
+<div class="eyebrow">7 декабря</div>
+<h1>С нашей годовщиной!</h1>
+<p class="sub" id="openSub">Сегодня ровно три года, как мы вместе. Я кое-что для тебя приготовил</p>
+<button class="btn" id="toCount" type="button">Открыть</button>
+</section>
+<section class="screen" id="sCount" hidden>
+<div class="eyebrow">мы вместе уже</div>
+<div class="big" id="days">0</div>
+<div style="font-family:var(--display);font-size:2rem;margin-top:-10px" id="daysWord">дней</div>
+<div class="since">
+<span><b id="hTot">0</b> часов</span><span><b id="mTot">0</b> минут</span><span><b id="sTot">0</b> секунд</span>
+</div>
+<p class="sub">и каждая из них с тобой</p>
+<button class="btn" id="toStory" type="button">Смотреть, как это было</button>
+</section>
+<section id="story" hidden>
+<div class="blur" id="stBlur"></div>
+<img class="main" id="stImg" alt="">
+<div class="bars" id="stBars"></div>
+<div class="num" id="stNum"></div>
+<div class="cap" id="stCap"></div>
+<div class="tap l" id="tapL"></div>
+<div class="tap r" id="tapR"></div>
+</section>
+<section class="screen" id="sLetter" hidden>
+<h1>Тебе</h1>
+<div class="letter" id="letter" aria-live="polite"></div>
+<div id="endBtns" hidden style="display:flex;flex-direction:column;align-items:center;gap:6px">
+<button class="btn" id="love" type="button">Я тоже тебя люблю</button>
+<button class="btn ghost" id="replay" type="button">посмотреть ещё раз</button>
+</div>
+</section>
+<section class="screen" id="sEnd" hidden>
+<h1>Люблю тебя</h1>
+<p class="sub">Впереди ещё много таких лет. С нашим трёхлетием, котик</p>
+<button class="btn ghost" id="replay2" type="button">посмотреть ещё раз</button>
+</section>
+<script>
+(function(){
+const OPEN_AT = new Date('2026-12-07T00:00:00+04:00');
+const TOGETHER_SINCE = new Date('2023-12-07T00:00:00+04:00');
+const PHOTOS = [{"src": "p/1793552500074_image.png", "cap": "Египет, клубника и ты"}, {"src": "p/1793552512831_image.png", "cap": "моё восемнадцатилетие"}, {"src": "p/1793552525011_image.png", "cap": "мы и Волга"}, {"src": "p/1793552530393_image.png", "cap": "ты и самый красивый закат"}, {"src": "p/1793552540219_image.png", "cap": "твой подарок: парные футболки, чтобы все знали, чьи мы"}, {"src": "p/1793552543786_image.png", "cap": "твой день рождения"}, {"src": "p/1793552568250_image.png", "cap": "ещё немного Египта"}, {"src": "p/1793552584695_image.png", "cap": "та самая, из-за которой я пропал", "rot": 90}, {"src": "p/1793552595912_image.png", "cap": "ночные поездки по Москве", "rot": -90}];
+const LETTER = ["Котик, вот уже три года мы вместе. Три года с тобой, а мне всё ещё мало.", "Мы знакомы чуть ли не с детства, и я, если честно, ещё тогда понял, что мы будем вместе. Помнишь неделю, когда мои родители уехали в Татарстан? Я каждый день звал тебя смотреть фильмы, хотя мы тогда даже не встречались. Фильмы, если что, были вообще не главное.", "Мне нравится, как ты идёшь к своим целям и всегда добиваешься того, чего хочешь. И я до сих пор иногда смотрю на тебя и не понимаю, как такая красивая девочка досталась именно мне.", "За эти три года у нас были Египет, Волга, закаты и ночная Москва. А зимой будет Турция, и я уже жду.", "Спасибо, что ты у меня есть. Люблю тебя, мой котик, пупсик, зайчик, сладуся и симпапулька. С нашим трёхлетием!"];
+const SIGN = 'твой';
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const screens=['sLock','sOpen','sCount','story','sLetter','sEnd'];
+function show(id){screens.forEach(s=>$(s).hidden=(s!==id));}
+const pad=n=>String(n).padStart(2,'0');
+const preview=location.hash==='#preview';
+if(!preview && Date.now()-OPEN_AT>86400000){
+$('openSub').textContent='7 декабря 2026 у нас было ровно три года. Этот подарок остаётся тут навсегда';
+}
+const ready=PHOTOS.map(p=>new Promise(res=>{
+const im=new Image();
+im.onload=()=>{
+if(!p.rot){p.url=p.src;return res();}
+const c=document.createElement('canvas'),s=Math.min(1,1400/Math.max(im.width,im.height));
+const w=im.width*s,h=im.height*s,r=Math.abs(p.rot)===90;
+c.width=r?h:w;c.height=r?w:h;const x=c.getContext('2d');
+x.translate(c.width/2,c.height/2);x.rotate(p.rot*Math.PI/180);x.drawImage(im,-w/2,-h/2,w,h);
+try{p.url=c.toDataURL('image/jpeg',.85)}catch(e){p.url=p.src}res();
+};
+im.onerror=()=>{p.url=p.src;res()};
+im.src=p.src;
+}));
+let lockTimer;
+function tickLock(){
+const ms=OPEN_AT-Date.now();
+if(ms<=0||preview){clearInterval(lockTimer);show('sOpen');burst(innerWidth/2,innerHeight/2,120);return;}
+const s=Math.floor(ms/1000);
+$('cD').textContent=pad(Math.floor(s/86400));$('cH').textContent=pad(Math.floor(s/3600)%24);
+$('cM').textContent=pad(Math.floor(s/60)%60);$('cS').textContent=pad(s%60);
+}
+const teases=['Рано ещё','Сказал же, не подглядывай','Терпение, котик','Ну правда, жди 7 декабря','Хорошая попытка'];
+let tz=0;
+$('lockIcon').addEventListener('click',()=>{
+const el=$('lockIcon');el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');
+$('lockHint').textContent=teases[tz++%teases.length];
+});
+if(OPEN_AT-Date.now()<=0||preview){show('sOpen');}
+else{show('sLock');tickLock();lockTimer=setInterval(tickLock,1000);}
+function plural(n){const a=n%10,b=n%100;if(a===1&&b!==11)return'день';if(a>=2&&a<=4&&(b<10||b>=20))return'дня';return'дней'}
+let countTimer;
+function tickCount(){
+const ms=Math.max(0,Date.now()-TOGETHER_SINCE),s=Math.floor(ms/1000);
+const d=Math.floor(s/86400);
+$('days').textContent=d.toLocaleString('ru-RU');$('daysWord').textContent=plural(d);
+$('hTot').textContent=Math.floor(s/3600).toLocaleString('ru-RU');
+$('mTot').textContent=Math.floor(s/60).toLocaleString('ru-RU');
+$('sTot').textContent=s.toLocaleString('ru-RU');
+}
+function animateDays(){
+const target=Math.floor(Math.max(0,Date.now()-TOGETHER_SINCE)/86400000);let t0=null;
+function f(t){t0??=t;const k=Math.min(1,(t-t0)/1600),e=1-Math.pow(1-k,3);const v=Math.round(target*e);
+$('days').textContent=v;$('daysWord').textContent=plural(v);
+if(k<1)requestAnimationFrame(f);else{tickCount();countTimer=setInterval(tickCount,1000);}}
+if(reduce){tickCount();countTimer=setInterval(tickCount,1000);}else requestAnimationFrame(f);
+}
+$('toCount').addEventListener('click',()=>{show('sCount');animateDays();});
+const DUR=5000;let idx=0,startT=0,elapsed=0,paused=false,raf=0;
+const bars=$('stBars');
+PHOTOS.forEach(()=>{const b=document.createElement('div');b.className='bar';b.appendChild(document.createElement('i'));bars.appendChild(b)});
+async function openStory(){clearInterval(countTimer);await Promise.all(ready);show('story');go(0);}
+function go(i){
+if(i<0)i=0;
+if(i>=PHOTOS.length){cancelAnimationFrame(raf);openLetter();return;}
+idx=i;elapsed=0;startT=performance.now();
+const p=PHOTOS[i],img=$('stImg');
+img.style.animation='none';void img.offsetWidth;img.style.animation='';
+img.src=p.url;$('stBlur').style.backgroundImage=`url("${p.url}")`;
+$('stCap').textContent=p.cap||'';$('stNum').textContent=`${i+1} / ${PHOTOS.length}`;
+[...bars.children].forEach((b,j)=>b.firstChild.style.width=j<i?'100%':'0');
+cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
+}
+function loop(t){
+if(!paused){elapsed=t-startT;}else{startT=t-elapsed;}
+const k=Math.min(1,elapsed/DUR);bars.children[idx].firstChild.style.width=(k*100)+'%';
+if(k>=1){go(idx+1);return;}
+raf=requestAnimationFrame(loop);
+}
+let downAt=0;
+['tapL','tapR'].forEach(id=>{
+const el=$(id);
+el.addEventListener('pointerdown',()=>{downAt=Date.now();paused=true;});
+el.addEventListener('pointerup',()=>{paused=false;if(Date.now()-downAt<250)go(id==='tapL'?idx-1:idx+1);});
+el.addEventListener('pointerleave',()=>{paused=false;});
+});
+addEventListener('keydown',e=>{if($('story').hidden)return;if(e.key==='ArrowRight')go(idx+1);if(e.key==='ArrowLeft')go(idx-1);});
+$('toStory').addEventListener('click',openStory);
+let typeTimer;
+function openLetter(){
+show('sLetter');$('endBtns').hidden=true;
+const box=$('letter');box.innerHTML='';
+let pi=0,ci=0,p=null;const caret=document.createElement('span');caret.className='caret';
+function step(){
+if(pi>=LETTER.length){caret.remove();const s=document.createElement('p');s.className='sign fadein';s.textContent=SIGN;box.appendChild(s);
+setTimeout(()=>{$('endBtns').hidden=false;$('endBtns').classList.add('fadein');},600);return;}
+if(!p){p=document.createElement('p');box.appendChild(p);p.appendChild(caret);}
+const txt=LETTER[pi];ci++;p.firstChild&&p.firstChild!==caret?p.firstChild.nodeValue=txt.slice(0,ci):p.insertBefore(document.createTextNode(txt.slice(0,ci)),caret);
+box.scrollTop=box.scrollHeight;
+if(ci>=txt.length){pi++;ci=0;p=null;typeTimer=setTimeout(step,reduce?0:450);}
+else typeTimer=setTimeout(step,reduce?0:(/[,.]/.test(txt[ci-1])?220:32));
+}
+step();
+box.onclick=()=>{
+if(pi>=LETTER.length)return;clearTimeout(typeTimer);
+box.innerHTML=LETTER.map(t=>'<p></p>').join('');[...box.children].forEach((el,j)=>el.textContent=LETTER[j]);
+pi=LETTER.length;step();
+};
+}
+$('love').addEventListener('click',()=>{show('sEnd');burst(innerWidth/2,innerHeight/2,180);rain=true;});
+function replay(){clearTimeout(typeTimer);rain=false;show('sOpen');}
+$('replay').addEventListener('click',replay);$('replay2').addEventListener('click',replay);
+const bg=$('bgfx'),bctx=bg.getContext('2d'),cv=$('fx'),ctx=cv.getContext('2d');
+function size(){const d=Math.min(devicePixelRatio||1,2);[bg,cv].forEach(c=>{c.width=innerWidth*d;c.height=innerHeight*d;c.getContext('2d').setTransform(d,0,0,d,0,0)})}
+size();addEventListener('resize',size);
+function heart(c,x,y,s,col,a){c.save();c.translate(x,y);c.rotate(a);c.scale(s,s);c.fillStyle=col;c.beginPath();
+c.moveTo(0,3);c.bezierCurveTo(-6,-2,-4,-7,0,-4);c.bezierCurveTo(4,-7,6,-2,0,3);c.fill();c.restore()}
+const cols=['#ff7a93','#f3c98b','#fff4ec','#e9c7cf'];
+let floaters=[],parts=[],rain=false,t0=0;
+function addF(y){floaters.push({x:Math.random()*innerWidth,y:y??innerHeight+20,s:1+Math.random()*2,v:.25+Math.random()*.6,ph:Math.random()*6.28,c:cols[floaters.length%4],o:.12+Math.random()*.25})}
+for(let i=0;i<20;i++)addF(Math.random()*innerHeight);
+function burst(x,y,n){if(reduce)return;for(let i=0;i<n;i++){const a=Math.random()*6.28,sp=3+Math.random()*7;
+parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-4,s:1.2+Math.random()*2.2,c:cols[i%4],r:Math.random()*6,vr:(Math.random()-.5)*.2,life:1})}}
+function tick(t){
+bctx.clearRect(0,0,innerWidth,innerHeight);
+floaters.forEach(f=>{f.y-=f.v;f.ph+=.02;bctx.globalAlpha=f.o;heart(bctx,f.x+Math.sin(f.ph)*14,f.y,f.s,f.c,Math.sin(f.ph)*.3)});
+floaters=floaters.filter(f=>f.y>-30);while(floaters.length<20)addF();bctx.globalAlpha=1;
+if(rain&&t-t0>90){t0=t;parts.push({x:Math.random()*innerWidth,y:-20,vx:Math.random()-.5,vy:1+Math.random()*2,s:1.2+Math.random()*2,c:cols[Math.random()*4|0],r:Math.random()*6,vr:(Math.random()-.5)*.1,life:1.4})}
+ctx.clearRect(0,0,innerWidth,innerHeight);
+parts.forEach(p=>{p.vy+=.12;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life-=.006;ctx.globalAlpha=Math.max(Math.min(p.life,1),0);heart(ctx,p.x,p.y,p.s,p.c,p.r)});
+ctx.globalAlpha=1;parts=parts.filter(p=>p.life>0&&p.y<innerHeight+40);
+requestAnimationFrame(tick);
+}
+if(!reduce)requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
